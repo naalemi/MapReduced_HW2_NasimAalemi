@@ -1,0 +1,25 @@
+#Date_of_Birth 11/07/1990
+
+from mrjob.job import MRJob
+from mrjob.step import MRStep
+
+class MRWordCount(MRJob):
+
+    def mapper(self, _, line):
+        # Split the line into words
+        for word in line.split():
+            # Yield each word in lowercase with a count of 1
+            yield (word.lower(), 1)
+
+    def reducer(self, word, counts):
+        # Sum the counts for each word
+        yield (word, sum(counts))
+
+    def steps(self):
+        return [
+            MRStep(mapper=self.mapper,
+                    reducer=self.reducer)
+        ]
+
+if __name__ == '__main__':
+    MRWordCount.run()
